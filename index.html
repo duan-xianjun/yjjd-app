@@ -25,7 +25,7 @@ header{padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;background:linear
 h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.3px}
 .chip{font-size:12px;color:#cfe0ff;background:#1c2b47;border:1px solid #2c3f61;border-radius:999px;padding:4px 10px;white-space:nowrap}
 .chip b{color:#7dd3fc;font-size:13px}
-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 96px}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 96px;overflow-anchor:none}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(15,22,37,.96);
   backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:20}
 nav button{flex:1;background:none;border:0;color:var(--muted);font-size:11px;padding:8px 0 7px;
@@ -1368,6 +1368,10 @@ function render(keepScroll){
   $("#cd").textContent=countdown();
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
   $("#view").scrollTop=keepScroll?keepY:0;
+  if(keepScroll){
+    const v=$("#view"), y=keepY;
+    requestAnimationFrame(()=>{ v.scrollTop=y; requestAnimationFrame(()=>{ v.scrollTop=y }) });
+  }
   saveUI();
 }
 
@@ -1416,7 +1420,7 @@ document.addEventListener("change",e=>{
 
 function revealAnswer(){
   const fb=document.querySelector(".fb-ok,.fb-bad");
-  if(fb&&fb.scrollIntoView) fb.scrollIntoView({block:"center",behavior:"smooth"});
+  if(fb&&fb.scrollIntoView) fb.scrollIntoView({block:"nearest"});
 }
 
 function judge(q){
