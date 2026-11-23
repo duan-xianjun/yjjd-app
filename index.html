@@ -59,6 +59,8 @@ nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;st
 .btn:disabled{opacity:.4}
 .exp{background:#10243a;border:1px solid #1e3a5c;border-radius:13px;padding:13px 14px;margin-top:12px;font-size:14px;line-height:1.7}
 .exp b{color:#7dd3fc}
+.fb-ok{background:#10291c;border:1px solid #1f6b3a;color:#7ee2a8;border-radius:12px;padding:10px 14px;margin-top:12px;font-size:15px;font-weight:600}
+.fb-bad{background:#2a1417;border:1px solid #7f2d33;color:#ff9aa2;border-radius:12px;padding:10px 14px;margin-top:12px;font-size:15px;font-weight:600}
 .flash{background:linear-gradient(160deg,#1a2740,#141c2d);border:1px solid #2a3b58;border-radius:20px;
   min-height:300px;display:flex;flex-direction:column;justify-content:center;padding:26px 22px;text-align:center}
 .flash .ft{font-size:12px;color:#7dd3fc;letter-spacing:2px;margin-bottom:14px}
@@ -1233,6 +1235,14 @@ function viewPractice(){
         : `<div class="muted" style="text-align:center;padding:6px">点击选项作答，单选即时判分</div>`);
 
   const exp=S.done?`<div class="exp"><b>解析：</b>${esc(q.e)}</div>`:"";
+  let fb="";
+  if(S.done){
+    const right=q.type==="multi"
+      ? (S.picked.length===q.a.length&&S.picked.every(i=>q.a.includes(i)))
+      : (S.picked[0]===q.a);
+    const ansText=q.type==="multi"?q.a.map(i=>"ABCD"[i]).join(""):"ABCD"[q.a];
+    fb=`<div class="${right?"fb-ok":"fb-bad"}">${right?"✓ 答对了":"✗ 答错了，正确答案 "+ansText}</div>`;
+  }
 
   return `
   <div class="seg">${CHS.map(c=>`<button class="${S.ch===c&&S.mode==="all"?"on":""}" data-act="ch" data-v="${c}">${c}</button>`).join("")}</div>
@@ -1245,6 +1255,7 @@ function viewPractice(){
     <div class="qtag">${q.ch} · ${q.tag||""} · ${q.type==="multi"?"多选题":"单选题"}</div>
     <div class="qtext">${esc(q.q)}</div>
     ${opts}
+    ${fb}
     ${exp}
     <div style="margin-top:14px">${btn}</div>
   </div>`;
@@ -1331,17 +1342,18 @@ function viewMe(){
 }
 
 /* ============ 渲染 ============ */
-function render(){
+function render(keepScroll){
   let html="";
   if(S.tab==="practice") html=viewPractice();
   else if(S.tab==="cards") html=viewCards();
   else if(S.tab==="cases") html=viewCases();
   else if(S.tab==="wrong") html=viewWrong();
   else html=viewMe();
+  const keepY=$("#view").scrollTop;
   $("#view").innerHTML=html;
   $("#cd").textContent=countdown();
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
-  $("#view").scrollTop=0;
+  $("#view").scrollTop=keepScroll?keepY:0;
 }
 
 /* ============ 交互 ============ */
@@ -1363,14 +1375,15 @@ document.addEventListener("click",e=>{
     const q=cur();
     if(q.type==="multi"){
       S.picked.includes(i)?S.picked=S.picked.filter(x=>x!==i):S.picked.push(i);
-      render();
+      render(true);
     }else{
-      S.picked=[i];S.done=true;judge(q);render();
+      S.picked=[i];S.done=true;judge(q);render(true);revealAnswer();
     }
     return;
   }
-  if(act==="submit"){const q=cur();S.done=true;judge(q);render();return}
+  if(act==="submit"){const q=cur();S.done=true;judge(q);render(true);revealAnswer();return}
   if(act==="next"){
+    if(S.toRemove){DB.wrong=DB.wrong.filter(x=>x!==S.toRemove);S.toRemove=null;save()}
     const p=pool();
     S.qi=(S.qi+1)%p.length;S.picked=[];S.done=false;render();return;
   }
@@ -1386,13 +1399,21 @@ document.addEventListener("change",e=>{
   if(e.target.id==="examDate"){DB.exam=e.target.value||"2027-09-18";save();render()}
 });
 
+function revealAnswer(){
+  const fb=document.querySelector(".fb-ok,.fb-bad");
+  if(fb&&fb.scrollIntoView) fb.scrollIntoView({block:"center",behavior:"smooth"});
+}
+
 function judge(q){
   const ok=q.type==="multi"
     ? (S.picked.length===q.a.length && S.picked.every(i=>q.a.includes(i)))
     : (S.picked[0]===q.a);
   DB.ans[q.id]={ok:ok,t:Date.now()};
   if(!ok && !DB.wrong.includes(q.id)) DB.wrong.push(q.id);
-  if(ok) DB.wrong=DB.wrong.filter(x=>x!==q.id);
+  if(ok){
+    if(S.mode==="wrong"){S.toRemove=q.id}
+    else{DB.wrong=DB.wrong.filter(x=>x!==q.id)}
+  }
   markDay();save();
 }
 
