@@ -1173,6 +1173,17 @@ DB.ans=DB.ans||{}; DB.wrong=DB.wrong||[]; DB.days=DB.days||{};
 DB.exam=DB.exam||"2027-09-18";
 
 const S={tab:"practice",ch:"全部",tag:"全部",mode:"all",qi:0,picked:[],done:false,cidx:0,flip:false};
+/* 恢复上次停留的位置（页面被系统回收后重开也能接着做） */
+(function restoreUI(){
+  const u=DB.ui||{};
+  if(u.tab) S.tab=u.tab;
+  if(u.ch) S.ch=u.ch;
+  if(u.tag) S.tag=u.tag;
+  if(u.mode) S.mode=u.mode;
+  if(typeof u.qi==="number") S.qi=u.qi;
+  if(typeof u.cidx==="number") S.cidx=u.cidx;
+})();
+function saveUI(){DB.ui={tab:S.tab,ch:S.ch,tag:S.tag,mode:S.mode,qi:S.qi,cidx:S.cidx};save()}
 
 const CHS=["全部","技术","管理","法规","通风空调"];
 const $=s=>document.querySelector(s);
@@ -1357,6 +1368,7 @@ function render(keepScroll){
   $("#cd").textContent=countdown();
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
   $("#view").scrollTop=keepScroll?keepY:0;
+  saveUI();
 }
 
 /* ============ 交互 ============ */
