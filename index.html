@@ -1166,6 +1166,7 @@ T＝50÷sin30°＝50÷0.5＝100kN；
 
 /* ============ 状态与存储 ============ */
 const KEY="yjjd.v1";
+const VER="v4 · 2026-11-23";
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}};
 let DB=load();
@@ -1352,7 +1353,7 @@ function viewMe(){
     <div class="muted" style="margin-top:10px;line-height:1.7">题库共 ${total} 题、${CARDS.length} 张卡片、${CASES.length} 个案例，<b style="color:#7dd3fc">全部为《机电工程管理与实务》内容</b>：技术＝1H410000，管理＝1H420000，法规＝1H430000（教材三篇，不是公共科目）；「通风空调」为技术篇专项分类。数据仅存本机 Safari。</div>
   </div>
   <button class="btn ghost" data-act="reset">清空全部学习记录</button>
-  <div class="muted" style="text-align:center;margin-top:18px;font-size:12px">题目为备考自编，正式复习请以最新版教材为准</div>`;
+  <div class="muted" style="text-align:center;margin-top:18px;font-size:12px">版本 ${VER}<br>题目为备考自编，正式复习请以最新版教材为准</div>`;
 }
 
 /* ============ 渲染 ============ */
