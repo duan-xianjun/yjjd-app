@@ -1191,8 +1191,11 @@ function pool(){
   return list;
 }
 function tagOptions(){
-  const base=S.ch==="全部"?BANK:BANK.filter(q=>q.ch===S.ch);
-  return ["全部",...new Set(base.map(q=>q.tag).filter(Boolean))];
+  if(S.ch==="全部") return [];
+  const base=BANK.filter(q=>q.ch===S.ch);
+  const cnt={};
+  base.forEach(q=>{if(q.tag) cnt[q.tag]=(cnt[q.tag]||0)+1});
+  return ["全部",...Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])];
 }
 function cur(){const p=pool();return p[Math.min(S.qi,p.length-1)]}
 
@@ -1246,7 +1249,7 @@ function viewPractice(){
 
   return `
   <div class="seg">${CHS.map(c=>`<button class="${S.ch===c&&S.mode==="all"?"on":""}" data-act="ch" data-v="${c}">${c}</button>`).join("")}</div>
-  <div class="seg" style="flex-wrap:wrap;margin-top:-4px">${tagOptions().map(t=>`<button style="flex:0 0 auto;padding:6px 10px;font-size:12px" class="${S.tag===t&&S.mode==="all"?"on":""}" data-act="tag" data-v="${t}">${t}</button>`).join("")}</div>
+  ${tagOptions().length?`<div class="seg" style="flex-wrap:wrap;margin-top:-4px">${tagOptions().map(t=>`<button style="flex:0 0 auto;padding:5px 9px;font-size:11.5px" class="${S.tag===t&&S.mode==="all"?"on":""}" data-act="tag" data-v="${t}">${t}</button>`).join("")}</div>`:""}
   <div class="bar"><i style="width:${pct}%"></i></div>
   <div class="muted" style="display:flex;justify-content:space-between;margin-bottom:12px">
     <span>${S.mode==="wrong"?"错题重做":S.ch+"练习"}</span><span>${idx+1} / ${p.length}　已答 ${answered}</span>
