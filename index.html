@@ -1444,7 +1444,7 @@ T＝50÷sin30°＝50÷0.5＝100kN；
 
 /* ============ 状态与存储 ============ */
 const KEY="yjjd.v1";
-const VER="v7 · 2026-11-26";
+const VER="v8 · 2026-11-26";
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}};
 let DB=load();
@@ -1517,7 +1517,7 @@ function viewPractice(){
       }
     }else if(S.picked.includes(i)) cls+=" sel";
     opts+=`<button class="${cls}" data-act="opt" data-i="${i}">
-      <span class="k">${"ABCD"[i]}</span><span>${esc(text)}</span></button>`;
+      <span class="k">${"ABCDEFGH"[i]}</span><span>${esc(text)}</span></button>`;
   });
 
   const canSubmit=q.type==="multi"&&!S.done&&S.picked.length>0;
@@ -1533,7 +1533,7 @@ function viewPractice(){
     const right=q.type==="multi"
       ? (S.picked.length===q.a.length&&S.picked.every(i=>q.a.includes(i)))
       : (S.picked[0]===q.a);
-    const ansText=q.type==="multi"?q.a.map(i=>"ABCD"[i]).join(""):"ABCD"[q.a];
+    const ansText=q.type==="multi"?q.a.map(i=>"ABCDEFGH"[i]).join(""):"ABCDEFGH"[q.a];
     fb=`<div class="${right?"fb-ok":"fb-bad"}">${right?"✓ 答对了":"✗ 答错了，正确答案 "+ansText}</div>`;
   }
 
@@ -1578,7 +1578,7 @@ function viewWrong(){
   <div class="list">
     ${items.map(q=>`<div class="item">
       <h3>${esc(q.q)}</h3>
-      <div class="muted">正确答案：${q.type==="multi"?q.a.map(i=>"ABCD"[i]).join(""):"ABCD"[q.a]}</div>
+      <div class="muted">正确答案：${q.type==="multi"?q.a.map(i=>"ABCDEFGH"[i]).join(""):"ABCDEFGH"[q.a]}</div>
       <details><summary>查看解析</summary><div class="ansbox">${esc(q.e)}</div></details>
     </div>`).join("")}
   </div>
