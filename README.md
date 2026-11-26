@@ -5,7 +5,7 @@
 ## 打开方式
 
 - 本地：直接双击 `index.html`
-- 在线（GitHub Pages）：`https://<用户名>.github.io/<仓库名>/`
+- 在线（GitHub Pages）：`https://duan-xianjun.github.io/yjjd-app/`
 
 手机浏览器打开后「添加到主屏幕」，即可全屏、离线使用。
 
@@ -24,3 +24,14 @@
 ## 说明
 
 第 9 节题目由 DeepTutor 生成、人工核对答案后录入；答案依据《机电工程管理与实务》及现行消防施工验收规范。
+
+## 同步更新
+
+本地改完 `D:\dshwork\yijian-jidian\index.html` 后，双击 `D:\dshwork\push-yjjd.cmd`，
+自动完成「复制 → 提交 → 推送」三步；也可带提交说明：
+
+```
+push-yjjd.cmd "新增第10节 5道题"
+```
+
+推送后约 1 分钟 GitHub Pages 生效。
